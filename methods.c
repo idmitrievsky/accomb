@@ -10,10 +10,8 @@
 #include <string.h>
 #include "errors.h"
 #include "lists.h"
-#include "sets.h"
+#include "combs.h"
 #include "methods.h"
-
-static SetList *ListOfSets = NULL;
 
 typedef ErrorCode (*Method) (List *list);
 
@@ -38,15 +36,9 @@ char *helpNotes[] =
 };
 #undef X
 
-ErrorCode MCreate(List *args)
+ErrorCode MU(List *args)
 {
     ErrorCode errorCode = ERRORCODE_NO_ERROR;
-    
-    if (Length(args) != 1)
-    {
-        return ERRORCODE_WRONG_NUMBER_OF_ARGS;
-    }
-    CATCH_ERROR(AddEmptySet(&ListOfSets, args->head->next->content), errHandler);
     
     return ERRORCODE_NO_ERROR;
     
@@ -54,276 +46,62 @@ errHandler:
     return errorCode;
 }
 
-ErrorCode MDelete(List *args)
+ErrorCode MA(List *args)
 {
-    if (Length(args) != 1)
-    {
-        return ERRORCODE_WRONG_NUMBER_OF_ARGS;
-    }
-    DeleteSetFrom(ListOfSets, args->head->next->content);
+    ErrorCode errorCode = ERRORCODE_NO_ERROR;
     
     return ERRORCODE_NO_ERROR;
+    
+errHandler:
+    return errorCode;
 }
 
-ErrorCode MEmpty(List *list)
+ErrorCode MP(List *args)
 {
-    return ERRORCODE_EMPTY_COMMAND;
-}
-
-ErrorCode MEnd(List *list)
-{
+    ErrorCode errorCode = ERRORCODE_NO_ERROR;
+    
     return ERRORCODE_NO_ERROR;
-}
-
-ErrorCode MView(List *args)
-{
-    Set *found = NULL;
-    
-    if (Length(args) == 0)
-    {
-        PrintSetList(ListOfSets);
-        return ERRORCODE_NO_ERROR;
-    }
-    
-    if (Length(args) == 1)
-    {
-        if ((found = FindInSetList(ListOfSets, args->head->next->content)))
-        {
-            PrintList(found->next->elems);
-            return ERRORCODE_NO_ERROR;
-        }
-        else
-        {
-            return ERRORCODE_NO_SUCH_SET;
-        }
-        
-    }
-    
-    return ERRORCODE_WRONG_NUMBER_OF_ARGS;
-}
-
-ErrorCode MCard(List *args)
-{
-    ErrorCode errorCode = ERRORCODE_NO_ERROR;
-    Set *found = NULL;
-    
-    if (Length(args) == 1)
-    {
-        CATCH_ERROR(FindInSetListExact(ListOfSets, args->head->next->content, &found), errHandler);
-        Cardinality(found);
-        return ERRORCODE_NO_ERROR;
-    }
-    
-    return ERRORCODE_WRONG_NUMBER_OF_ARGS;
     
 errHandler:
     return errorCode;
 }
 
-ErrorCode MAdd(List *args)
+ErrorCode MC(List *args)
 {
     ErrorCode errorCode = ERRORCODE_NO_ERROR;
-    char *name = NULL, *element = NULL;
-    Set *found = NULL;
     
-    if (Length(args) == 2)
-    {
-        element = args->head->next->content;
-        name = args->head->next->next->content;
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name, &found), errHandler);
-        CATCH_ERROR(AddToSet(&found, element), errHandler);
-        return ERRORCODE_NO_ERROR;
-    }
-    
-    return ERRORCODE_WRONG_NUMBER_OF_ARGS;
+    return ERRORCODE_NO_ERROR;
     
 errHandler:
     return errorCode;
 }
 
-ErrorCode MRemove(List *args)
+ErrorCode MS(List *args)
 {
     ErrorCode errorCode = ERRORCODE_NO_ERROR;
-    char *name = NULL, *element = NULL;
-    Set *found = NULL;
     
-    if (Length(args) == 2)
-    {
-        element = args->head->next->content;
-        name = args->head->next->next->content;
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name, &found), errHandler);
-        CATCH_ERROR(DeleteFromSet(found, element), errHandler);
-        return ERRORCODE_NO_ERROR;
-    }
-    
-    return ERRORCODE_WRONG_NUMBER_OF_ARGS;
+    return ERRORCODE_NO_ERROR;
     
 errHandler:
     return errorCode;
 }
 
-ErrorCode MBelongs(List *args)
+ErrorCode MB(List *args)
 {
     ErrorCode errorCode = ERRORCODE_NO_ERROR;
-    char *name = NULL, *element = NULL;
-    Set *found = NULL;
     
-    if (Length(args) == 2)
-    {
-        element = args->head->next->content;
-        name = args->head->next->next->content;
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name, &found), errHandler);
-        IsMember(element, found);
-        return ERRORCODE_NO_ERROR;
-    }
-    
-    return ERRORCODE_WRONG_NUMBER_OF_ARGS;
+    return ERRORCODE_NO_ERROR;
     
 errHandler:
     return errorCode;
 }
 
-ErrorCode MUnion(List *args)
-{
-    ErrorCode errorCode = ERRORCODE_NO_ERROR;
-    char *name1 = NULL, *name2 = NULL, *newName = NULL;
-    Set *found1 = NULL, *found2 = NULL;
-    
-    
-    if (Length(args) == 3)
-    {
-        name1 = args->head->next->content;
-        name2 = args->head->next->next->content;
-        newName = args->head->next->next->next->content;
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name1, &found1), errHandler);
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name2, &found2), errHandler);
-        if (FindInSetList(ListOfSets, newName))
-        {
-            return ERRORCODE_ALREADY_EXISTS;
-        }
-        CATCH_ERROR(AddSetCombination(&ListOfSets, Union, found1, found2, newName), errHandler);
-        return ERRORCODE_NO_ERROR;
-    }
-    
-    return ERRORCODE_WRONG_NUMBER_OF_ARGS;
-    
-errHandler:
-    return errorCode;
-}
-
-ErrorCode MIntersection(List *args)
-{
-    ErrorCode errorCode = ERRORCODE_NO_ERROR;
-    char *name1 = NULL, *name2 = NULL, *newName = NULL;
-    Set *found1 = NULL, *found2 = NULL;
-    
-    
-    if (Length(args) == 3)
-    {
-        name1 = args->head->next->content;
-        name2 = args->head->next->next->content;
-        newName = args->head->next->next->next->content;
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name1, &found1), errHandler);
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name2, &found2), errHandler);
-        if (FindInSetList(ListOfSets, newName))
-        {
-            return ERRORCODE_ALREADY_EXISTS;
-        }
-        CATCH_ERROR(AddSetCombination(&ListOfSets, Intersection, found1, found2, newName), errHandler);
-        return ERRORCODE_NO_ERROR;
-    }
-    
-    return ERRORCODE_WRONG_NUMBER_OF_ARGS;
-    
-errHandler:
-    return errorCode;
-}
-
-ErrorCode MSDifference(List *args)
-{
-    ErrorCode errorCode = ERRORCODE_NO_ERROR;
-    char *name1 = NULL, *name2 = NULL, *newName = NULL;
-    Set *found1 = NULL, *found2 = NULL;
-    
-    
-    if (Length(args) == 3)
-    {
-        name1 = args->head->next->content;
-        name2 = args->head->next->next->content;
-        newName = args->head->next->next->next->content;
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name1, &found1), errHandler);
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name2, &found2), errHandler);
-        if (FindInSetList(ListOfSets, newName))
-        {
-            return ERRORCODE_ALREADY_EXISTS;
-        }
-        CATCH_ERROR(AddSetCombination(&ListOfSets, SymmDifference, found1, found2, newName), errHandler);
-        return ERRORCODE_NO_ERROR;
-    }
-    
-    return ERRORCODE_WRONG_NUMBER_OF_ARGS;
-    
-errHandler:
-    return errorCode;
-}
-
-ErrorCode MSubstract(List *args)
-{
-    ErrorCode errorCode = ERRORCODE_NO_ERROR;
-    char *name1 = NULL, *name2 = NULL, *newName = NULL;
-    Set *found1 = NULL, *found2 = NULL;
-    
-    
-    if (Length(args) == 3)
-    {
-        name1 = args->head->next->content;
-        name2 = args->head->next->next->content;
-        newName = args->head->next->next->next->content;
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name1, &found1), errHandler);
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name2, &found2), errHandler);
-        if (FindInSetList(ListOfSets, newName))
-        {
-            return ERRORCODE_ALREADY_EXISTS;
-        }
-        CATCH_ERROR(AddSetCombination(&ListOfSets, Substract, found1, found2, newName), errHandler);
-        return ERRORCODE_NO_ERROR;
-    }
-    
-    return ERRORCODE_WRONG_NUMBER_OF_ARGS;
-    
-errHandler:
-    return errorCode;
-}
-
-ErrorCode MContains(List *args)
-{
-    ErrorCode errorCode = ERRORCODE_NO_ERROR;
-    char *name1 = NULL, *name2 = NULL;
-    Set *found1 = NULL, *found2 = NULL;
-    
-    
-    if (Length(args) == 2)
-    {
-        name1 = args->head->next->content;
-        name2 = args->head->next->next->content;
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name1, &found1), errHandler);
-        CATCH_ERROR(FindInSetListExact(ListOfSets, name2, &found2), errHandler);
-        IsSubset(found2, found1);
-        return ERRORCODE_NO_ERROR;
-    }
-    
-    return ERRORCODE_WRONG_NUMBER_OF_ARGS;
-    
-errHandler:
-    return errorCode;
-}
-
-ErrorCode MQuit(List *args)
+ErrorCode MQ(List *args)
 {
     return ERRORCODE_NO_ERROR;
 }
 
-ErrorCode MHelp(List *args)
+ErrorCode MH(List *args)
 {
     Commands command = 0;
     
@@ -338,6 +116,17 @@ ErrorCode MHelp(List *args)
     }
     return ERRORCODE_WRONG_NUMBER_OF_ARGS;
 }
+
+ErrorCode MEmpty(List *list)
+{
+    return ERRORCODE_EMPTY_COMMAND;
+}
+
+ErrorCode MEnd(List *list)
+{
+    return ERRORCODE_NO_ERROR;
+}
+
 
 #define X(a, b, c, d) c,
 Method methods[] =
@@ -364,7 +153,7 @@ ErrorCode Route(List *list, int *quit)
     {
         return ERRORCODE_DONT_KNOW_COMMAND;
     }
-    else if (!strcmp(commands_names[QUIT], commands_names[command]))
+    else if (!strcmp(commands_names[Q], commands_names[command]))
     {
         *quit = 1;
     }
@@ -383,9 +172,4 @@ errHandler:
         ReleaseList(&args);
     }
     return errorCode;
-}
-
-void Exit()
-{
-    ReleaseSetList(&ListOfSets);
 }

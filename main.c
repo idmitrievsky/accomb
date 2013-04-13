@@ -8,7 +8,6 @@
 
 #include "cli.h"
 #include "lists.h"
-#include "sets.h"
 #include "methods.h"
 #include "infinitestring.h"
 
@@ -36,7 +35,6 @@ int main(int argc, const char * argv[])
     
     ReleaseList(&cmnds); // after escaping while
     ReleaseInput(string);
-    Exit(); // releasing all allocated sets
     
     return 0;
     
