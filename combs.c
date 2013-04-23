@@ -175,7 +175,7 @@ ErrorCode S_(UNI m, UNI n, UNI *result)
 {
     ErrorCode errorCode = ERRORCODE_NO_ERROR;
     
-    UNI *a = NULL, *b = NULL, i = 0, j = 0;
+    UNI *a = NULL, *b = NULL, i = 0, j = 0, stage = 0;
     size_t sUNI = 0;
     
     sUNI = sizeof(UNI);
@@ -212,11 +212,18 @@ ErrorCode S_(UNI m, UNI n, UNI *result)
     a[0] = 0;
     a[1] = 1;
     
+    stage = 1;
+    
     for (i = 2; i <= m; i++)
     {
+        if (i > m - n + 1)
+        {
+            stage++;
+        }
+        
         memcpy(b, a, i * sUNI);
         a[0] = 0;
-        for (j = 1; j < min(i, n + 1); j++)
+        for (j = stage; j < min(i, n + 1); j++)
         {
             UNI tmp = 0;
             
