@@ -9,7 +9,6 @@
 #include "cli.h"
 #include "lists.h"
 #include "methods.h"
-#include "combs.h" /////
 #include "infinitestring.h"
 
 int main(int argc, const char * argv[])
@@ -17,15 +16,8 @@ int main(int argc, const char * argv[])
     List *cmnds = NULL;
     char *string = NULL;
     int quit = 0;
-    unsigned int f = 0; ///
     
     ErrorCode errorCode = ERRORCODE_NO_ERROR, endOfFile = ERRORCODE_NO_ERROR;
-    
-    ErrorCode e = ERRORCODE_NO_ERROR; ////
-    
-    e = S_(24, 19, &f);
-    
-    
     
     CATCH_ERROR(InitInput(&string), errHandler); // allocating input string
     MEM(string, initialError); // checking if allocation was successful, otherwise quiting
