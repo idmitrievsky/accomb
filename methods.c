@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "errors.h"
 #include "lists.h"
 #include "combs.h"
@@ -39,6 +40,23 @@ char *helpNotes[] =
 ErrorCode MU(List *args)
 {
     ErrorCode errorCode = ERRORCODE_NO_ERROR;
+    UNI res = 0, m = 0, n = 0;
+    
+    if (Length(args) != 2)
+    {
+        return ERRORCODE_WRONG_NUMBER_OF_ARGS;
+    }
+    
+    if (args->head->next->content[0] == '-' || args->head->next->next->content[0] == '-')
+    {
+        return ERRORCODE_SIGN;
+    }
+    
+    sscanf(args->head->next->content, "%u", &m);
+    sscanf(args->head->next->next->content, "%u", &n);
+    
+    CATCH_ERROR(U_(m, n, &res), errHandler);
+    PrintNum(res);
     
     return ERRORCODE_NO_ERROR;
     
@@ -49,6 +67,23 @@ errHandler:
 ErrorCode MA(List *args)
 {
     ErrorCode errorCode = ERRORCODE_NO_ERROR;
+    UNI res = 0, m = 0, n = 0;
+    
+    if (Length(args) != 2)
+    {
+        return ERRORCODE_WRONG_NUMBER_OF_ARGS;
+    }
+    
+    if (args->head->next->content[0] == '-' || args->head->next->next->content[0] == '-')
+    {
+        return ERRORCODE_SIGN;
+    }
+    
+    sscanf(args->head->next->content, "%u", &m);
+    sscanf(args->head->next->next->content, "%u", &n);
+    
+    CATCH_ERROR(A_(m, n, &res), errHandler);
+    PrintNum(res);
     
     return ERRORCODE_NO_ERROR;
     
@@ -59,6 +94,25 @@ errHandler:
 ErrorCode MP(List *args)
 {
     ErrorCode errorCode = ERRORCODE_NO_ERROR;
+    UNI res = 0, n = 0;
+    
+    
+    if (Length(args) != 1)
+    {
+        return ERRORCODE_WRONG_NUMBER_OF_ARGS;
+    }
+    
+    if (args->head->next->content[0] == '-')
+    {
+        return ERRORCODE_SIGN;
+    }
+
+    sscanf(args->head->next->content, "%u", &n);
+    
+
+    
+    CATCH_ERROR(P_(n, &res), errHandler);
+    PrintNum(res);
     
     return ERRORCODE_NO_ERROR;
     
@@ -69,6 +123,23 @@ errHandler:
 ErrorCode MC(List *args)
 {
     ErrorCode errorCode = ERRORCODE_NO_ERROR;
+    UNI res = 0, m = 0, n = 0;
+    
+    if (Length(args) != 2)
+    {
+        return ERRORCODE_WRONG_NUMBER_OF_ARGS;
+    }
+    
+    if (args->head->next->content[0] == '-' || args->head->next->next->content[0] == '-')
+    {
+        return ERRORCODE_SIGN;
+    }
+    
+    sscanf(args->head->next->content, "%u", &m);
+    sscanf(args->head->next->next->content, "%u", &n);
+    
+    CATCH_ERROR(C_(m, n, &res), errHandler);
+    PrintNum(res);
     
     return ERRORCODE_NO_ERROR;
     
@@ -79,6 +150,23 @@ errHandler:
 ErrorCode MS(List *args)
 {
     ErrorCode errorCode = ERRORCODE_NO_ERROR;
+    UNI res = 0, m = 0, n = 0;
+    
+    if (Length(args) != 2)
+    {
+        return ERRORCODE_WRONG_NUMBER_OF_ARGS;
+    }
+    
+    if (args->head->next->content[0] == '-' || args->head->next->next->content[0] == '-')
+    {
+        return ERRORCODE_SIGN;
+    }
+    
+    sscanf(args->head->next->content, "%u", &m);
+    sscanf(args->head->next->next->content, "%u", &n);
+    
+    CATCH_ERROR(S_(m, n, &res), errHandler);
+    PrintNum(res);
     
     return ERRORCODE_NO_ERROR;
     
@@ -89,6 +177,22 @@ errHandler:
 ErrorCode MB(List *args)
 {
     ErrorCode errorCode = ERRORCODE_NO_ERROR;
+    UNI res = 0,n = 0;
+    
+    if (Length(args) != 1)
+    {
+        return ERRORCODE_WRONG_NUMBER_OF_ARGS;
+    }
+    
+    if (args->head->next->content[0] == '-')
+    {
+        return ERRORCODE_SIGN;
+    }
+    
+    sscanf(args->head->next->content, "%u", &n);
+    
+    CATCH_ERROR(B_(n, &res), errHandler);
+    PrintNum(res);
     
     return ERRORCODE_NO_ERROR;
     
