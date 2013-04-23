@@ -7,6 +7,7 @@
 //
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "combs.h"
 
@@ -144,14 +145,14 @@ ErrorCode C_(UNI m, UNI n, UNI *result)
     
     for (i = 2; i <= m; i++)
     {
-        memcpy(b, a, i * sUNI);
+        memcpy(b, a, min(i, n + 1) * sUNI);
         a[0] = 1;
         for (j = 1; j < min(i, n + 1); j++)
         {
             a[j] = b[j] + b[j - 1];
             if (a[j] < b[j] || a[j] < b[j - 1])
             {
-                return ERRORCODE_OVERFLOW;
+                CATCH_ERROR(ERRORCODE_OVERFLOW, errHandler);
             }
         }
     }
@@ -168,7 +169,11 @@ errHandler:
     {
         free(a);
     }
-    return ERRORCODE_MEMORY_ALLOCATION_ERROR;
+    if (b)
+    {
+        free(b);
+    }
+    return errorCode;
 }
 
 ErrorCode S_(UNI m, UNI n, UNI *result)
@@ -221,7 +226,7 @@ ErrorCode S_(UNI m, UNI n, UNI *result)
             stage++;
         }
         
-        memcpy(b, a, i * sUNI);
+        memcpy(b, a, min(i, n + 1) * sUNI);
         a[0] = 0;
         for (j = stage; j < min(i, n + 1); j++)
         {
@@ -230,12 +235,12 @@ ErrorCode S_(UNI m, UNI n, UNI *result)
             tmp = j * b[j];
             if (tmp / j != b[j])
             {
-                return ERRORCODE_OVERFLOW;
+                CATCH_ERROR(ERRORCODE_OVERFLOW, errHandler);
             }
             a[j] = tmp + b[j - 1];
             if (a[j] < tmp || a[j] < b[j - 1])
             {
-                return ERRORCODE_OVERFLOW;
+                CATCH_ERROR(ERRORCODE_OVERFLOW, errHandler);
             }
         }
         if (i < n + 1)
@@ -256,6 +261,52 @@ errHandler:
     {
         free(a);
     }
-    return ERRORCODE_MEMORY_ALLOCATION_ERROR;
+    if (b)
+    {
+        free(b);
+    }
+    return errorCode;
+}
+
+
+ErrorCode B_(UNI n, UNI *result)
+{
+    ErrorCode errorCode = ERRORCODE_NO_ERROR;
+    
+    UNI i = 0, previous = 0;
+    
+    if (n == 0)
+    {
+        *result = 1;
+        return ERRORCODE_NO_ERROR;
+    }
+
+    *result = 0;
+    
+    for (i = 0; i < n; i++)
+    {
+        UNI s = 0;
+        
+        previous = *result;
+        
+        CATCH_ERROR(S_(n, i, &s), errHandler);
+        
+        *result += s;
+        
+        if (*result < s || *result < previous)
+        {
+            CATCH_ERROR(ERRORCODE_OVERFLOW, errHandler);
+        }
+    }
+    
+    return ERRORCODE_NO_ERROR;
+    
+errHandler:
+    return errorCode;
+}
+
+void PrintNum(UNI num)
+{
+    printf("%u\n", num);
 }
 
